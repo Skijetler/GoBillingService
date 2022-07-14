@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package api.billing.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+//import "validate/validate.proto";
+
+option go_package = "billing/api/billing/v1;v1";
+
+service Billing {
+    rpc CreateAccount (CreateAccountRequest) returns (CreateAccountReply){
+        option (google.api.http) = {
+            post: "/billing/account/create"
+            body: "*"
+        };
+    };
+
+    rpc GetAccountInfo (GetAccountInfoRequest) returns (GetAccountInfoReply){
+        option (google.api.http) = {
+            get: "/billing/account"
+        };
+    };
+
+    rpc GetAllAccounts (google.protobuf.Empty) returns (GetAllAccountsReply){
+        option (google.api.http) = {
+            get: "/billing/account/all"
+        };
+    };
+
+    rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountReply){
+        option (google.api.http) = {
+            post: "/billing/account/delete"
+            body: "*"
+        };
+    };
+
+    rpc TransferFunds (TransferFundsRequest) returns (TransferFundsReply){
+        option (google.api.http) = {
+            post: "/billing/transfer"
+            body: "*"
+        };
+    };
+
+    rpc ShowHistory (ShowHistoryRequest) returns (ShowHistoryReply){
+        option (google.api.http) = {
+            get: "/billing/history"
+        };
+    };
+}
+
+enum CURRENCY_TYPE {
+    RUB = 0;
+    USD = 1;
+    EUR = 2;
+}
+
+message CreateAccountRequest {
+    CURRENCY_TYPE currency = 1;
+}
+
+message CreateAccountReply {
+    int64 account_id = 1;
+}
+
+message GetAccountInfoRequest {
+    int64 account_id = 1;
+}
+
+message GetAccountInfoReply {
+    CURRENCY_TYPE currency = 1;
+    int64 balance = 2;
+}
+
+message GetAllAccountsReply {
+    repeated int64 accounts_ids = 1;
+}
+
+message DeleteAccountRequest {
+    int64 account_id = 1;
+}
+
+message DeleteAccountReply {
+    int64 result_code = 1;
+}
+
+message TransferFundsRequest {
+    int64 account_id = 1;
+    int64 dest_account = 2;
+    int64 amount = 3;
+}
+
+message TransferFundsReply {
+    int64 balance = 1;
+}
+
+message ShowHistoryRequest {
+    int64 account_id = 1;
+}
+
+message ShowHistoryReply {
+    message HistoryEntry {
+        enum TRANSFER_TYPE {
+            INCOMING = 0;
+            OUTGOING = 1;
+        }
+        TRANSFER_TYPE type = 1;
+        int64 account_id = 2;
+        int64 amount = 3;
+        google.protobuf.Timestamp timestamp = 4;
+    }
+    repeated HistoryEntry transfers = 1;
+}

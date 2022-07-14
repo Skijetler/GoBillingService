@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package billing.v1;
+
+option go_package = "billing/api/billing/v1;v1";
+
+enum ServiceErrors {
+    ACCOUNT_NOT_FOUND = 0;
+    ACCOUNT_NOT_BELONG = 1;
+    INSUFFICIENT_FUNDS = 2;
+}
