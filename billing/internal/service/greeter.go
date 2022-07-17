@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	v1 "billing/api/helloworld/v1"
-	"billing/internal/biz"
+	v1 "github.com/Skijetler/GoBillingService/billing/api/billing/v1"
+	"github.com/Skijetler/GoBillingService/billing/internal/biz"
 )
 
 // GreeterService is a greeter service.

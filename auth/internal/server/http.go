@@ -1,9 +1,9 @@
 package server
 
 import (
-	v1 "auth/api/helloworld/v1"
-	"auth/internal/conf"
-	"auth/internal/service"
+	v1 "github.com/Skijetler/GoBillingService/auth/api/auth/v1"
+	"github.com/Skijetler/GoBillingService/auth/internal/conf"
+	"github.com/Skijetler/GoBillingService/auth/internal/service"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"

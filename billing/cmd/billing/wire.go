@@ -1,3 +1,4 @@
+//go:build wireinject
 // +build wireinject
 
 // The build tag makes sure the stub is not built in the final build.
@@ -5,11 +6,11 @@
 package main
 
 import (
-	"billing/internal/biz"
-	"billing/internal/conf"
-	"billing/internal/data"
-	"billing/internal/server"
-	"billing/internal/service"
+	"github.com/Skijetler/GoBillingService/billing/internal/biz"
+	"github.com/Skijetler/GoBillingService/billing/internal/conf"
+	"github.com/Skijetler/GoBillingService/billing/internal/data"
+	"github.com/Skijetler/GoBillingService/billing/internal/server"
+	"github.com/Skijetler/GoBillingService/billing/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"

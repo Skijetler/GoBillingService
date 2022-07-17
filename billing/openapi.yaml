@@ -3,21 +3,17 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: Billing API
     version: 0.0.1
 paths:
-    /helloworld/{name}:
+    /billing/account:
         get:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
+                - Billing
+            operationId: Billing_GetAccountInfo
             parameters:
-                - name: name
-                  in: path
-                  required: true
+                - name: accountId.value
+                  in: query
                   schema:
                     type: string
             responses:
@@ -26,14 +22,172 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/api.billing.v1.GetAccountInfoReply'
+    /billing/account/all:
+        get:
+            tags:
+                - Billing
+            operationId: Billing_GetAllAccounts
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.billing.v1.GetAllAccountsReply'
+    /billing/account/create:
+        post:
+            tags:
+                - Billing
+            operationId: Billing_CreateAccount
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.billing.v1.CreateAccountRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.billing.v1.CreateAccountReply'
+    /billing/account/delete:
+        post:
+            tags:
+                - Billing
+            operationId: Billing_DeleteAccount
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.billing.v1.DeleteAccountRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.billing.v1.DeleteAccountReply'
+    /billing/history:
+        get:
+            tags:
+                - Billing
+            operationId: Billing_ShowHistory
+            parameters:
+                - name: accountId.value
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.billing.v1.ShowHistoryReply'
+    /billing/transfer:
+        post:
+            tags:
+                - Billing
+            operationId: Billing_TransferFunds
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.billing.v1.TransferFundsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.billing.v1.TransferFundsReply'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        api.billing.v1.CreateAccountReply:
             type: object
             properties:
-                message:
+                accountId:
+                    $ref: '#/components/schemas/api.billing.v1.UUID'
+        api.billing.v1.CreateAccountRequest:
+            type: object
+            properties:
+                currency:
+                    type: integer
+                    format: enum
+        api.billing.v1.DeleteAccountReply:
+            type: object
+            properties:
+                resultCode:
+                    type: integer
+                    format: int64
+        api.billing.v1.DeleteAccountRequest:
+            type: object
+            properties:
+                accountId:
+                    $ref: '#/components/schemas/api.billing.v1.UUID'
+        api.billing.v1.GetAccountInfoReply:
+            type: object
+            properties:
+                currency:
+                    type: integer
+                    format: enum
+                balance:
+                    type: integer
+                    format: int64
+        api.billing.v1.GetAllAccountsReply:
+            type: object
+            properties:
+                accountsIds:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.billing.v1.UUID'
+        api.billing.v1.ShowHistoryReply:
+            type: object
+            properties:
+                transfers:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/api.billing.v1.ShowHistoryReply_HistoryEntry'
+        api.billing.v1.ShowHistoryReply_HistoryEntry:
+            type: object
+            properties:
+                type:
+                    type: integer
+                    format: enum
+                accountId:
+                    $ref: '#/components/schemas/api.billing.v1.UUID'
+                amount:
+                    type: integer
+                    format: int64
+                timestamp:
                     type: string
-            description: The response message containing the greetings
+                    format: date-time
+        api.billing.v1.TransferFundsReply:
+            type: object
+            properties:
+                balance:
+                    type: integer
+                    format: int64
+        api.billing.v1.TransferFundsRequest:
+            type: object
+            properties:
+                accountId:
+                    $ref: '#/components/schemas/api.billing.v1.UUID'
+                destAccount:
+                    type: integer
+                    format: int64
+                amount:
+                    type: integer
+                    format: int64
+        api.billing.v1.UUID:
+            type: object
+            properties:
+                value:
+                    type: string
 tags:
-    - name: Greeter
+    - name: Billing

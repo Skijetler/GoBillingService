@@ -4,7 +4,7 @@ import (
 	"flag"
 	"os"
 
-	"auth/internal/conf"
+	"github.com/Skijetler/GoBillingService/auth/internal/conf"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
@@ -18,11 +18,13 @@ import (
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name string = "Auth"
 	// Version is the version of the compiled software.
 	Version string
 	// flagconf is the config flag.
 	flagconf string
+	// prefixs is the config environment variable prefix
+	prefixs = []string{"GO_BILLING_SERVICE_AUTH_", "AUTH_"}
 
 	id, _ = os.Hostname()
 )

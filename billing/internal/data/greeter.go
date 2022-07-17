@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 
-	"billing/internal/biz"
+	"github.com/Skijetler/GoBillingService/billing/internal/biz"
 	"github.com/go-kratos/kratos/v2/log"
 )
 

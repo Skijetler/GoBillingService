@@ -7,11 +7,11 @@
 package main
 
 import (
-	"auth/internal/biz"
-	"auth/internal/conf"
-	"auth/internal/data"
-	"auth/internal/server"
-	"auth/internal/service"
+	"github.com/Skijetler/GoBillingService/auth/internal/biz"
+	"github.com/Skijetler/GoBillingService/auth/internal/conf"
+	"github.com/Skijetler/GoBillingService/auth/internal/data"
+	"github.com/Skijetler/GoBillingService/auth/internal/server"
+	"github.com/Skijetler/GoBillingService/auth/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 )

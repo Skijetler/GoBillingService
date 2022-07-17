@@ -1,8 +1,9 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
+CONFIG_PROTO_FILES=$(shell find internal -name conf.proto)
 API_PROTO_FILES=$(shell find api -name auth.proto)
-ERRORS_PROTO_FILES=$(shell find api -name error_reason.proto)
+ERRORS_PROTO_FILES=$(shell find api -name errors.proto)
 
 .PHONY: init
 # init env
@@ -19,7 +20,7 @@ config:
 	protoc --proto_path=./internal \
 	       --proto_path=./third_party \
  	       --go_out=paths=source_relative:./internal \
-	       $(INTERNAL_PROTO_FILES)
+	       $(CONFIG_PROTO_FILES)
 
 .PHONY: api
 # generate api proto
