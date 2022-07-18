@@ -10,10 +10,19 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, auth *service.AuthService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
-			recovery.Recovery(),
+			middleware.Chain(
+				recovery.Recovery(),
+				validate.Validator(),
+				tracing.Server(),
+				logging.Server(logger),
+				metrics.Server(
+					metrics.WithSeconds(prom.NewHistogram(vecs.Seconds)),
+					metrics.WithRequests(prom.NewCounter(vecs.Requests)),
+				),
+			),
 		),
 	}
 	if c.Grpc.Network != "" {
@@ -26,6 +35,6 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterGreeterServer(srv, greeter)
+	v1.RegisterAuthServer(srv, auth)
 	return srv
 }

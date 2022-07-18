@@ -41,3 +41,11 @@ message Hasher {
   uint32 threads = 4;
   uint32 key_len = 5;
 }
+
+message TokenMaker {
+  string access_key = 1;
+  string refresh_key = 2;
+  string assert = 3;
+  google.protobuf.Duration access_ttl = 4;
+  google.protobuf.Duration refresh_ttl = 5;
+}

@@ -10,6 +10,8 @@ import (
 	"github.com/Skijetler/GoBillingService/auth/internal/biz"
 	"github.com/Skijetler/GoBillingService/auth/internal/conf"
 	"github.com/Skijetler/GoBillingService/auth/internal/data"
+	"github.com/Skijetler/GoBillingService/auth/internal/pkg/hash"
+	"github.com/Skijetler/GoBillingService/auth/internal/pkg/paseto"
 	"github.com/Skijetler/GoBillingService/auth/internal/server"
 	"github.com/Skijetler/GoBillingService/auth/internal/service"
 	"github.com/go-kratos/kratos/v2"
@@ -19,16 +21,22 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func wireApp(confServer *conf.Server, confData *conf.Data, hasher *conf.Hasher, tokenMaker *conf.TokenMaker, logger log.Logger) (*kratos.App, func(), error) {
 	dataData, cleanup, err := data.NewData(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
+	userRepo := data.NewAuthRepo(dataData, logger)
+	passwordHasher := hash.NewPasswordHasher(hasher)
+	pasetoTokenMaker, err := paseto.NewPasetoMaker(tokenMaker)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	authUsecase := biz.NewAuthUsecase(userRepo, logger, passwordHasher, pasetoTokenMaker)
+	authService := service.NewAuthService(authUsecase)
+	grpcServer := server.NewGRPCServer(confServer, authService, logger)
+	httpServer := server.NewHTTPServer(confServer, authService, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()
